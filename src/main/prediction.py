@@ -4,7 +4,9 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 import streamlit as st
 
-matches = pd.read_csv("matches.csv", index_col=0)
+
+url = "https://raw.githubusercontent.com/dimitrivahlas/PLPredict/main/src/main/matches.csv"
+matches = pd.read_csv(url, index_col=0)
 
 ## Prepare data by putting objects to int or float so model can undestand
 matches["date"] = pd.to_datetime(matches["date"])
