@@ -1,0 +1,11 @@
+# Ignore Visual Studio Code configuration for C++
+.vscode/c_cpp_properties.json
+
+# Ignore pip installation script
+get-pip.py
+
+# Ignore the trained model file
+random_forest_model.pkl
+
+# Ignore Jupyter notebook for predictions
+prediction.ipynb
