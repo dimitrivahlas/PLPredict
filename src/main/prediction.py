@@ -5,6 +5,7 @@ from sklearn.metrics import precision_score
 import streamlit as st
 
 
+
 url = "https://raw.githubusercontent.com/dimitrivahlas/PLPredict/main/src/main/matches.csv"
 matches = pd.read_csv(url, index_col=0)
 
@@ -74,7 +75,7 @@ merged[(merged["predicted_x"] == 1) & (merged["predicted_y"] == 0)]["actual_x"].
 test["predicted"] = preds
 
 ##Ui part
-st.title("Premier League Match Predictor")
+st.title("Premier Predict")
 
 # Premier League Teams
 premierLeagueTeams = ["Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton and Hove Albion",
@@ -97,16 +98,63 @@ result_map = {1 : "Win", 0 : "Draw/Lose", "D" : "Draw", "L" : "Lose", "W": "Win"
 team_match['predicted_result'] = team_match['predicted'].map(result_map)
 team_match['actual_result'] = team_match['result'].map(result_map)
 
-if team_match.empty:
-    st.warning(f"No matches found for {team} in Matchweek {week}.")
-    
-else:
-    
-    st.write(team_match['team'],  team_match['opponent'])
-    
-    st.write(team_match['actual_result'],team_match['predicted_result'])
-    st.metric("Goals Scored", team_match['gf'])
-    st.metric("Goals Conceded", team_match['ga'])
-    st.metric("Shots on Target", team_match['sot'])
-    
+def venueType(team_match):
+    if team_match['venue'].iloc[0] == "Home":
+        return "Away"
+    else:
+        return "Home"
+
+
+display = False
+
+
+def display_results():
+    if team_match.empty and not display:
+        st.warning(f"No matches found for {team} in Matchweek {week}.")
+    else:
+        col1, col2, col3 = st.columns([1,1,1])
+        with col1:
+            st.header("Match Facts")
+            st.write("Date and Time:")
+            st.write("Referee:")
+            st.write("Teams:")
+            st.write("Home/Away:")
+            st.write("Goals Scored:")
+            st.write("Posession:")
+            st.write("Expected Goals:")
+            st.write("Formation:")
+            st.write("Shots on Target:")
+            st.write("Shots taken:")
+        with col2:
+            st.header("")
+            st.write(f"{team_match['date'].iloc[0].date()}")
+            st.write(f"{team_match['referee'].iloc[0]}")
+            st.write(f"{team}")
+            st.write(f"{team_match['venue'].iloc[0]}")
+            st.write(f"{team_match['gf'].iloc[0]}")
+            st.write(f"{team_match['poss'].iloc[0]}%")
+            st.write(f"{team_match['xg'].iloc[0]}")
+            st.write(f"{team_match['formation'].iloc[0]}")
+            st.write(f"{team_match['sot'].iloc[0]}")
+            st.write(f"{team_match['sh'].iloc[0]}")
+        with col3:
+            st.header("")
+            st.write(f"{team_match['time'].iloc[0]}")
+            st.write("-")
+            st.write(f"{team_match['opponent'].iloc[0]}")
+            st.write(venueType(team_match))
+            st.write(f"{team_match['ga'].iloc[0]}")
+            st.write(f"{100 - team_match['poss'].iloc[0]}%")
+            st.write(f"{team_match['xga'].iloc[0]}")
+            st.write(f"{team_match['opp formation'].iloc[0]}")
+                        
+        
+        st.header(f"Predicted vs Actual result for: {team} vs {team_match['opponent'].iloc[0]}")
+        st.write(f"Predicted result: {team_match['predicted_result'].iloc[0]} for {team}")
+        st.write(f"Actual result: {team_match['actual_result'].iloc[0]} for {team}")
+         
+            
+if st.button("Results",use_container_width=True):
+    display = True
+    display_results()
 
